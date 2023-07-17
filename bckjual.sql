@@ -39,8 +39,59 @@ CREATE TABLE `barang` (
 
 LOCK TABLES `barang` WRITE;
 /*!40000 ALTER TABLE `barang` DISABLE KEYS */;
-INSERT INTO `barang` VALUES ('01','Boneka','Buah',1000000,-11,4),('02','Asus TUF','Unit',15000000,42,23),('03','Komik Boruto','Pcs',25000000,-7,13),('04','Genesis Krystal','Buah',2500000,1340,366),('05','Dakimakura Alcina','Buah',150000,-9,8),('06','Rubik MoYu','Buah',650000,63,24),('07','Figure Asuna','Buah',325000,16,7);
+INSERT INTO `barang` VALUES ('01','Boneka','Buah',1000000,592,10),('02','Asus TUF','Unit',15000000,399,10),('03','Komik Boruto','Pcs',25000000,1007,13),('04','Genesis Krystal','Buah',2500000,1341,20),('05','buku','Lusin',15000,200,20);
 /*!40000 ALTER TABLE `barang` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `beli`
+--
+
+DROP TABLE IF EXISTS `beli`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `beli` (
+  `no_beli` int(10) NOT NULL,
+  `kd_pms` char(6) DEFAULT NULL,
+  `tgl_beli` date DEFAULT NULL,
+  PRIMARY KEY (`no_beli`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `beli`
+--
+
+LOCK TABLES `beli` WRITE;
+/*!40000 ALTER TABLE `beli` DISABLE KEYS */;
+INSERT INTO `beli` VALUES (1,'02','2023-07-01'),(2,'03','2023-07-02'),(3,'01','2023-07-02'),(4,'03','2023-07-02');
+/*!40000 ALTER TABLE `beli` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dbeli`
+--
+
+DROP TABLE IF EXISTS `dbeli`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dbeli` (
+  `no_beli` int(10) NOT NULL,
+  `kd_brg` char(6) NOT NULL,
+  `harga_beli` float DEFAULT NULL,
+  `jml_beli` int(4) DEFAULT NULL,
+  PRIMARY KEY (`no_beli`,`kd_brg`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dbeli`
+--
+
+LOCK TABLES `dbeli` WRITE;
+/*!40000 ALTER TABLE `dbeli` DISABLE KEYS */;
+INSERT INTO `dbeli` VALUES (1,'01',1000000,2),(2,'02',15000000,2),(2,'03',25000000,7),(2,'04',2500000,5),(2,'06',650000,4),(3,'05',15000,8),(4,'05',15000,7);
+/*!40000 ALTER TABLE `dbeli` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -65,7 +116,7 @@ CREATE TABLE `djual` (
 
 LOCK TABLES `djual` WRITE;
 /*!40000 ALTER TABLE `djual` DISABLE KEYS */;
-INSERT INTO `djual` VALUES (8,'02',15000000,2),(8,'03',25000000,2),(8,'04',2500000,3),(8,'06',650000,1),(9,'01',1000000,1),(9,'02',15000000,2),(9,'03',25000000,2),(9,'04',2500000,3),(9,'06',650000,1);
+INSERT INTO `djual` VALUES (8,'02',15000000,2),(8,'03',25000000,2),(8,'04',2500000,3),(8,'06',650000,1),(9,'01',1000000,1),(9,'02',15000000,2),(9,'03',25000000,2),(9,'04',2500000,3),(9,'06',650000,1),(10,'01',1000000,5),(10,'02',15000000,2),(10,'03',25000000,3),(10,'04',2500000,4),(11,'01',1000000,5),(12,'01',1000000,5),(12,'02',15000000,3),(12,'05',15000,3),(13,'05',15000,7);
 /*!40000 ALTER TABLE `djual` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +141,7 @@ CREATE TABLE `jual` (
 
 LOCK TABLES `jual` WRITE;
 /*!40000 ALTER TABLE `jual` DISABLE KEYS */;
-INSERT INTO `jual` VALUES (8,'06','2023-06-16'),(9,'03','2023-06-16');
+INSERT INTO `jual` VALUES (8,'06','2023-06-16'),(9,'03','2023-06-16'),(10,'04','2023-06-23'),(11,'02','2023-07-01'),(12,'04','2023-07-02'),(13,'04','2023-07-02');
 /*!40000 ALTER TABLE `jual` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,8 +170,36 @@ CREATE TABLE `konsumen` (
 
 LOCK TABLES `konsumen` WRITE;
 /*!40000 ALTER TABLE `konsumen` DISABLE KEYS */;
-INSERT INTO `konsumen` VALUES ('01','Fidela Azzahra',NULL,NULL,NULL,NULL,NULL),('02','Aziza Azka',NULL,NULL,NULL,NULL,NULL),('03','Salsabila Ayu',NULL,NULL,NULL,NULL,NULL),('04','Oboy',NULL,NULL,NULL,NULL,NULL),('05','Raiden Shogun',NULL,NULL,NULL,NULL,NULL),('06','Salma Shafira',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `konsumen` VALUES ('01','Fidela Azzahra','Sri Rejeki Selatan 8','Semarang','50149','8262','fidela@gmail.com'),('03','Qanitah','Sri Rejeki Selatan','Semarang','50149','0004','qani@gmail.com'),('04','Qani','Sri Rejeki','Semarang','50149','4000','qani@gmail.com');
 /*!40000 ALTER TABLE `konsumen` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pemasok`
+--
+
+DROP TABLE IF EXISTS `pemasok`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pemasok` (
+  `kd_pms` varchar(6) NOT NULL,
+  `nm_pms` varchar(30) DEFAULT NULL,
+  `nm_brg` varchar(30) DEFAULT NULL,
+  `kota_pms` varchar(20) DEFAULT NULL,
+  `kd_pos` varchar(5) DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`kd_pms`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pemasok`
+--
+
+LOCK TABLES `pemasok` WRITE;
+/*!40000 ALTER TABLE `pemasok` DISABLE KEYS */;
+INSERT INTO `pemasok` VALUES ('01','Thoma','Genesis Krystal','Inazuma City','42626','8765'),('02','Sara','Boneka Shogun','Inazuma City','42626','8765'),('03','Yae Miko','Boneka','Inazuma City','42626','9999'),('04','Diluc','Asus TUF','Monsdstat','00001','2020');
+/*!40000 ALTER TABLE `pemasok` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -158,4 +237,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-23 19:44:30
+-- Dump completed on 2023-07-02 19:57:34

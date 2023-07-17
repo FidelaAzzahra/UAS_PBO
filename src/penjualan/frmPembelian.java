@@ -5,7 +5,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 package penjualan;
 
 import java.awt.event.KeyEvent;
@@ -21,28 +20,31 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author ASUS
+ * @author admin
  */
-
-public class frmTransaksi extends javax.swing.JFrame {
+public class frmPembelian extends javax.swing.JFrame {
     Connection Con;
     ResultSet RsBrg;
-    ResultSet RsKons;
+    ResultSet RsPms;
     Statement stm;
     double total=0;
     String tanggal;
     Boolean edit=false;
     PreparedStatement pstat;
-    String sKd_Kons;
+    String sKd_Pms;
     String sKd_Brg;
-    String xnojual;
+    String xnobeli;
     
     DefaultTableModel tableModel = new DefaultTableModel(
             new Object [][]{}, 
             new String [] {
                 "Kd Barang", "Nama Barang","Harga Barang","Jumlah","Total"});
     
-    public frmTransaksi() {
+    /**
+     * Creates new form frmPembelian
+     */
+    
+    public frmPembelian() {
         initComponents();
         open_db();
         inisialisasi_tabel();
@@ -54,19 +56,19 @@ public class frmTransaksi extends javax.swing.JFrame {
     
     private void setField()
     {
-        int row=tblJual.getSelectedRow();
-        cmbKd_Brg.setSelectedItem((String)tblJual.getValueAt(row,0));
-        txtNm_Brg.setText((String)tblJual.getValueAt(row,1));
-        String harga = Double.toString((Double)tblJual.getValueAt(row,2));
+        int row=tblBeli.getSelectedRow();
+        cmbKd_Brg.setSelectedItem((String)tblBeli.getValueAt(row,0));
+        txtNm_Brg.setText((String)tblBeli.getValueAt(row,1));
+        String harga = Double.toString((Double)tblBeli.getValueAt(row,2));
         txtHarga.setText(harga);
-        String jumlah=Integer.toString((Integer)tblJual.getValueAt(row,3));
+        String jumlah=Integer.toString((Integer)tblBeli.getValueAt(row,3));
         txtJml.setText(jumlah);
-        String total=Double.toString((Double)tblJual.getValueAt(row,4));
+        String total=Double.toString((Double)tblBeli.getValueAt(row,4));
         txtTot.setText(total);
     }
     
-    // method hitung penjualan
-    private void hitung_jual()
+    // method hitung pembelian
+    private void hitung_beli()
     {
         double xtot,xhrg;
         int xjml;
@@ -93,17 +95,17 @@ public class frmTransaksi extends javax.swing.JFrame {
         }
     }
     
-    // method baca data konsumen
-    private void baca_konsumen()
+    // method baca data pemasok
+    private void baca_pemasok()
     {
         try{
             stm=Con.createStatement();
-            pstat = Con.prepareStatement("select kd_kons,nm_kons from konsumen",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            pstat = Con.prepareStatement("select kd_pms,nm_pms from pemasok",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             ResultSet rs = pstat.executeQuery();
             rs.beforeFirst();
         while(rs.next())
         {
-            cmbKd_Kons.addItem(rs.getString(1).trim());
+            cmbKd_Pms.addItem(rs.getString(1).trim());
         }
         rs.close();
         }catch(SQLException e){
@@ -114,7 +116,7 @@ public class frmTransaksi extends javax.swing.JFrame {
     // metod set model table
     public void inisialisasi_tabel()
     {
-        tblJual.setModel(tableModel);
+        tblBeli.setModel(tableModel);
     }
     
     // method baca data barang
@@ -166,11 +168,11 @@ public class frmTransaksi extends javax.swing.JFrame {
     }
     
     // method baca konsumen setelah combo konsumen di klik
-    private void detail_konsumen(String xkode)
+    private void detail_pemasok(String xkode)
     {
         try{
             stm=Con.createStatement();
-            pstat = Con.prepareStatement("select * from konsumen where kd_kons='"+xkode+"'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            pstat = Con.prepareStatement("select * from pemasok where kd_pms='"+xkode+"'",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             ResultSet rs = pstat.executeQuery();
             rs.beforeFirst();
         while(rs.next()){
@@ -185,14 +187,14 @@ public class frmTransaksi extends javax.swing.JFrame {
     // method pengkosongan isian
     private void kosong()
     {
-        txtNoJual.setText("");
+        txtNoBeli.setText("");
         txtNama.setText("");
         txtHarga.setText("");
         txtTotal.setText("");
         text.setText("");
     }
     
-    // method kosongkan detail jual
+    // method kosongkan detail beli
     private void kosong_detail()
     {
         txtNm_Brg.setText("");
@@ -204,20 +206,20 @@ public class frmTransaksi extends javax.swing.JFrame {
     // method aktif on/off isian
     private void aktif(boolean x)
     {
-        cmbKd_Kons.setEnabled(x);
+        cmbKd_Pms.setEnabled(x);
         cmbKd_Brg.setEnabled(x);
-        cmbKd_Kons.removeAllItems();
+        cmbKd_Pms.removeAllItems();
         cmbKd_Brg.removeAllItems();
         txtTgl.setEnabled(x);
         txtJml.setEditable(x);
     }
     
-    // method buat nomor jual otomatis
-    private void nomor_jual()
+    // method buat nomor beli otomatis
+    private void nomor_beli()
     {
         try {
             stm = Con.createStatement();
-            pstat = Con.prepareStatement("SELECT no_jual FROM jual ORDER BY no_jual DESC LIMIT 1",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            pstat = Con.prepareStatement("SELECT no_beli FROM beli ORDER BY no_beli DESC LIMIT 1",ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
             ResultSet rs = pstat.executeQuery();
             int brs=0;
             
@@ -226,12 +228,12 @@ public class frmTransaksi extends javax.swing.JFrame {
             }
             
             if(brs==0)
-                txtNoJual.setText("1");
+                txtNoBeli.setText("1");
                 else {
                     rs.beforeFirst();
                     while(rs.next()){
-                        int no=rs.getInt("no_jual")+1;
-                        txtNoJual.setText(Integer.toString(no));
+                        int no=rs.getInt("no_beli")+1;
+                        txtNoBeli.setText(Integer.toString(no));
                     }
                 }
             
@@ -252,7 +254,7 @@ public class frmTransaksi extends javax.swing.JFrame {
         tanggal=Integer.toString(year)+"-"+Integer.toString(month)+"-"+Integer.toString(day);
     }
     
-    // method simpan detail jual di tabel
+    // method simpan detail beli di tabel
     private void simpan_ditabel()
     {
         try {
@@ -269,33 +271,33 @@ public class frmTransaksi extends javax.swing.JFrame {
         }
     }
     
-    // method simpan transaksi penjualan pada table di Mysql
-    private void simpan_transaksi()
+    // method simpan transaksi pembelian pada table di Mysql
+    private void simpan_pembelian()
     {
         try{
-            xnojual=txtNoJual.getText();
+            xnobeli=txtNoBeli.getText();
             format_tanggal();
-            String xkode=cmbKd_Kons.getSelectedItem().toString();
-            String msql="insert into jual values('"+xnojual+"','"+xkode+"','"+tanggal+"')";
+            String xkode=cmbKd_Pms.getSelectedItem().toString();
+            String msql="insert into beli values('"+xnobeli+"','"+xkode+"','"+tanggal+"')";
             stm.executeUpdate(msql);
             
-        for(int i=0;i<tblJual.getRowCount();i++)
+        for(int i=0;i<tblBeli.getRowCount();i++)
         {
-            String xkd=(String)tblJual.getValueAt(i,0);
-            double xhrg=(Double)tblJual.getValueAt(i,2);
-            int xjml=(Integer)tblJual.getValueAt(i,3);
-            String zsql="insert into djual values('"+xnojual+"','"+xkd+"',"+xhrg+","+xjml+")";
+            String xkd=(String)tblBeli.getValueAt(i,0);
+            double xhrg=(Double)tblBeli.getValueAt(i,2);
+            int xjml=(Integer)tblBeli.getValueAt(i,3);
+            String zsql="insert into dbeli values('"+xnobeli+"','"+xkd+"',"+xhrg+","+xjml+")";
             stm.executeUpdate(zsql);
             
             //update stok
-            String ysql="update barang set stok=stok-"+xjml+" where kd_brg='"+xkd+"'";
+            String ysql="update barang set stok=stok+"+xjml+" where kd_brg='"+xkd+"'";
             stm.executeUpdate(ysql);
         }
         }catch(SQLException e){
             System.out.println("Error : "+e);
         }
     }
-
+    
     private class PrintingTask extends SwingWorker<Object, Object> {
         private final MessageFormat headerFormat;
         private final MessageFormat footerFormat;
@@ -327,58 +329,65 @@ public class frmTransaksi extends javax.swing.JFrame {
         }
     }
     
-    @SuppressWarnings("unchecked")
     
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    
+    
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        txtNoBeli = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtTgl = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
-        cmbKd_Kons = new javax.swing.JComboBox<>();
+        cmbKd_Pms = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
+        txtNama = new javax.swing.JTextField();
         cmbKd_Brg = new javax.swing.JComboBox<>();
+        txtNm_Brg = new javax.swing.JTextField();
+        txtHarga = new javax.swing.JTextField();
+        txtJml = new javax.swing.JTextField();
         txtTot = new javax.swing.JTextField();
-        cmdHapusItem = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblJual = new javax.swing.JTable();
+        tblBeli = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         text = new javax.swing.JTextArea();
-        txtTotal = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
         cmdTambah = new javax.swing.JButton();
         cmdSimpan = new javax.swing.JButton();
+        cmdHapusItem = new javax.swing.JButton();
         cmdBatal = new javax.swing.JButton();
         cmdCetak = new javax.swing.JButton();
         cmdKeluar = new javax.swing.JButton();
-        txtJml = new javax.swing.JTextField();
-        txtHarga = new javax.swing.JTextField();
-        txtNoJual = new javax.swing.JTextField();
-        txtNama = new javax.swing.JTextField();
-        txtNm_Brg = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("TRANSAKSI PENJUALAN");
+        jLabel1.setText("TRANSAKSI PEMBELIAN");
 
-        jLabel2.setText("No Jual");
+        jLabel2.setText("No Beli");
 
-        jLabel3.setText("Tgl Jual");
+        jLabel3.setText("Tgl Beli");
 
         txtTgl.setModel(new javax.swing.SpinnerDateModel());
 
-        jLabel4.setText("Kode Konsumen");
+        jLabel4.setText("Kode Pemasok");
 
-        cmbKd_Kons.addActionListener(new java.awt.event.ActionListener() {
+        cmbKd_Pms.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbKd_KonsActionPerformed(evt);
+                cmbKd_PmsActionPerformed(evt);
             }
         });
 
-        jLabel5.setText("Nama Konsumen");
+        jLabel5.setText("Nama Pemasok");
 
         cmbKd_Brg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -386,19 +395,20 @@ public class frmTransaksi extends javax.swing.JFrame {
             }
         });
 
-        txtTot.setText("Total");
+        txtNm_Brg.setText("Nama Barang");
 
-        cmdHapusItem.setBackground(new java.awt.Color(51, 51, 255));
-        cmdHapusItem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cmdHapusItem.setForeground(new java.awt.Color(255, 255, 255));
-        cmdHapusItem.setText("Hapus Item");
-        cmdHapusItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdHapusItemActionPerformed(evt);
+        txtHarga.setText("Harga");
+
+        txtJml.setText("Jml");
+        txtJml.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtJmlKeyPressed(evt);
             }
         });
 
-        tblJual.setModel(new javax.swing.table.DefaultTableModel(
+        txtTot.setText("Total");
+
+        tblBeli.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -406,26 +416,26 @@ public class frmTransaksi extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Kd Barang", "Nama Barang", "Harga Barang", "Jumlah", "Total"
+                "Kd Barang", "Nama Barang", "Harga Barang", "Jumlah ", "Total"
             }
         ));
-        tblJual.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblBeli.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblJualMouseClicked(evt);
+                tblBeliMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tblJual);
+        jScrollPane1.setViewportView(tblBeli);
 
         text.setColumns(20);
         text.setRows(5);
         jScrollPane2.setViewportView(text);
 
-        txtTotal.setText("Total harganya nanti muncul disini");
-
         jLabel6.setText("Total Harga");
 
+        txtTotal.setText("Total harganya nanti muncul disini");
+
         cmdTambah.setBackground(new java.awt.Color(51, 51, 255));
-        cmdTambah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cmdTambah.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         cmdTambah.setForeground(new java.awt.Color(255, 255, 255));
         cmdTambah.setText("Tambah");
         cmdTambah.addActionListener(new java.awt.event.ActionListener() {
@@ -435,7 +445,7 @@ public class frmTransaksi extends javax.swing.JFrame {
         });
 
         cmdSimpan.setBackground(new java.awt.Color(51, 51, 255));
-        cmdSimpan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cmdSimpan.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         cmdSimpan.setForeground(new java.awt.Color(255, 255, 255));
         cmdSimpan.setText("Simpan");
         cmdSimpan.addActionListener(new java.awt.event.ActionListener() {
@@ -444,8 +454,18 @@ public class frmTransaksi extends javax.swing.JFrame {
             }
         });
 
+        cmdHapusItem.setBackground(new java.awt.Color(51, 51, 255));
+        cmdHapusItem.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        cmdHapusItem.setForeground(new java.awt.Color(255, 255, 255));
+        cmdHapusItem.setText("Hapus Item");
+        cmdHapusItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdHapusItemActionPerformed(evt);
+            }
+        });
+
         cmdBatal.setBackground(new java.awt.Color(51, 51, 255));
-        cmdBatal.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cmdBatal.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         cmdBatal.setForeground(new java.awt.Color(255, 255, 255));
         cmdBatal.setText("Batal");
         cmdBatal.addActionListener(new java.awt.event.ActionListener() {
@@ -455,7 +475,7 @@ public class frmTransaksi extends javax.swing.JFrame {
         });
 
         cmdCetak.setBackground(new java.awt.Color(51, 51, 255));
-        cmdCetak.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cmdCetak.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         cmdCetak.setForeground(new java.awt.Color(255, 255, 255));
         cmdCetak.setText("Cetak");
         cmdCetak.addActionListener(new java.awt.event.ActionListener() {
@@ -465,7 +485,7 @@ public class frmTransaksi extends javax.swing.JFrame {
         });
 
         cmdKeluar.setBackground(new java.awt.Color(255, 51, 51));
-        cmdKeluar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        cmdKeluar.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
         cmdKeluar.setForeground(new java.awt.Color(255, 255, 255));
         cmdKeluar.setText("Keluar");
         cmdKeluar.addActionListener(new java.awt.event.ActionListener() {
@@ -474,129 +494,119 @@ public class frmTransaksi extends javax.swing.JFrame {
             }
         });
 
-        txtJml.setText("Jml");
-        txtJml.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtJmlKeyPressed(evt);
-            }
-        });
-
-        txtHarga.setText("Harga");
-
-        txtNm_Brg.setText("Nama Barang");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(55, 55, 55)
+                .addGap(63, 63, 63)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cmdTambah)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdSimpan)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdHapusItem, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdBatal)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdCetak)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdKeluar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtTotal))
                     .addComponent(jScrollPane1)
                     .addComponent(jScrollPane2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cmbKd_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtNm_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(txtJml, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(txtTot, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(cmdTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtTotal)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cmdSimpan)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmdHapusItem, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmdBatal)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmdCetak)
-                                .addGap(18, 18, 18)
-                                .addComponent(cmdKeluar))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtTgl, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                            .addComponent(txtNoJual))
-                        .addGap(60, 60, 60)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbKd_Kons, 0, 158, Short.MAX_VALUE)
-                            .addComponent(txtNama))))
-                .addContainerGap(52, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(238, 238, 238))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(cmbKd_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(txtNm_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtJml, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(txtTot, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtNoBeli)
+                                        .addComponent(txtTgl, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE))
+                                    .addGap(70, 70, 70)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel5)))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel1)
+                                    .addGap(3, 3, 3)))
+                            .addGap(23, 23, 23)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(cmbKd_Pms, 0, 147, Short.MAX_VALUE)
+                                .addComponent(txtNama)))))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
+                .addGap(53, 53, 53)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
+                .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
+                    .addComponent(txtNoBeli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(cmbKd_Kons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNoJual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbKd_Pms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
                     .addComponent(txtTgl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(txtNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(34, 34, 34)
+                    .addComponent(txtNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbKd_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtJml, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNm_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNm_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtJml, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addGap(26, 26, 26)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmdHapusItem)
                     .addComponent(cmdTambah)
                     .addComponent(cmdSimpan)
+                    .addComponent(cmdHapusItem)
                     .addComponent(cmdBatal)
                     .addComponent(cmdCetak)
                     .addComponent(cmdKeluar))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addGap(43, 43, 43))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cmbKd_KonsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbKd_KonsActionPerformed
+    private void cmbKd_PmsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbKd_PmsActionPerformed
         // TODO add your handling code here:
-        JComboBox <String> cKd_Kons = (javax.swing.JComboBox<String>) evt.getSource();
+        JComboBox <String> cKd_Pms = (javax.swing.JComboBox<String>) evt.getSource();
         
         // Membaca Item Yang Terpilih -> String
-        sKd_Kons = (String) cKd_Kons.getSelectedItem();
-        detail_konsumen(sKd_Kons); 
-    }//GEN-LAST:event_cmbKd_KonsActionPerformed
+        sKd_Pms = (String) cKd_Pms.getSelectedItem();
+        detail_pemasok(sKd_Pms);
+    }//GEN-LAST:event_cmbKd_PmsActionPerformed
 
     private void cmbKd_BrgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbKd_BrgActionPerformed
         // TODO add your handling code here:
@@ -610,10 +620,43 @@ public class frmTransaksi extends javax.swing.JFrame {
         txtTot.setText("");
     }//GEN-LAST:event_cmbKd_BrgActionPerformed
 
+    private void txtJmlKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJmlKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            hitung_beli();
+            simpan_ditabel();
+        }
+    }//GEN-LAST:event_txtJmlKeyPressed
+
+    private void tblBeliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBeliMouseClicked
+        // TODO add your handling code here:
+        setField();
+    }//GEN-LAST:event_tblBeliMouseClicked
+
+    private void cmdTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTambahActionPerformed
+        // TODO add your handling code here:
+        aktif(true);
+        setTombol(false);
+        kosong();
+        baca_pemasok();
+        baca_barang();
+        nomor_beli();
+    }//GEN-LAST:event_cmdTambahActionPerformed
+
+    private void cmdSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSimpanActionPerformed
+        // TODO add your handling code here:
+        simpan_pembelian();
+        aktif(false);
+        setTombol(true);
+        kosong();
+        cmdCetak.setEnabled(true);
+        kosong_detail();
+    }//GEN-LAST:event_cmdSimpanActionPerformed
+
     private void cmdHapusItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdHapusItemActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel dataModel = (DefaultTableModel) tblJual.getModel();
-        int row=tblJual.getSelectedRow();
+        DefaultTableModel dataModel = (DefaultTableModel) tblBeli.getModel();
+        int row=tblBeli.getSelectedRow();
 
         if (row != -1) { // Check if a row is selected
             dataModel.removeRow(row);
@@ -628,31 +671,6 @@ public class frmTransaksi extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_cmdHapusItemActionPerformed
 
-    private void tblJualMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblJualMouseClicked
-        // TODO add your handling code here:
-        setField();
-    }//GEN-LAST:event_tblJualMouseClicked
-
-    private void cmdTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTambahActionPerformed
-        // TODO add your handling code here:
-        aktif(true);
-        setTombol(false);
-        kosong();
-        baca_konsumen();
-        baca_barang();
-        nomor_jual();
-    }//GEN-LAST:event_cmdTambahActionPerformed
-
-    private void cmdSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSimpanActionPerformed
-        // TODO add your handling code here:
-        simpan_transaksi();
-        aktif(false);
-        setTombol(true);
-        kosong();
-        cmdCetak.setEnabled(true);
-        kosong_detail();
-    }//GEN-LAST:event_cmdSimpanActionPerformed
-
     private void cmdBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdBatalActionPerformed
         // TODO add your handling code here:
         aktif(false);
@@ -664,18 +682,18 @@ public class frmTransaksi extends javax.swing.JFrame {
         // TODO add your handling code here:
         format_tanggal();
         
-        String ctk="Nota Penjualan\nNo : "+xnojual+"\nTanggal : "+tanggal;
+        String ctk="Nota Pembelian\nNo : "+xnobeli+"\nTanggal : "+tanggal;
         ctk=ctk+"\n"+"--------------------------------------------------------------------";
         ctk=ctk+"\n"+"Kode\tNama Barang\tHarga\tJml\tTotal";
         ctk=ctk+"\n"+"--------------------------------------------------------------------";
         
-        for(int i=0;i<tblJual.getRowCount();i++)
+        for(int i=0;i<tblBeli.getRowCount();i++)
         {
-            String xkd=(String)tblJual.getValueAt(i,0);
-            String xnama=(String)tblJual.getValueAt(i,1);
-            double xhrg=(Double)tblJual.getValueAt(i,2);
-            int xjml=(Integer)tblJual.getValueAt(i,3);
-            double xtot=(Double)tblJual.getValueAt(i,4);
+            String xkd=(String)tblBeli.getValueAt(i,0);
+            String xnama=(String)tblBeli.getValueAt(i,1);
+            double xhrg=(Double)tblBeli.getValueAt(i,2);
+            int xjml=(Integer)tblBeli.getValueAt(i,3);
+            double xtot=(Double)tblBeli.getValueAt(i,4);
             ctk=ctk+"\n"+xkd+"\t"+xnama+"\t"+xhrg+"\t"+xjml+"\t"+xtot;
         }
         
@@ -687,7 +705,7 @@ public class frmTransaksi extends javax.swing.JFrame {
         MessageFormat footer = new MessageFormat(footerField);;
         boolean interactive = true;//interactiveCheck.isSelected();
         boolean background = true;//backgroundCheck.isSelected();
-        PrintingTask task = new PrintingTask(header, footer, interactive);
+        frmPembelian.PrintingTask task = new frmPembelian.PrintingTask(header, footer, interactive);
         
         if (background) {
             task.execute();
@@ -701,18 +719,44 @@ public class frmTransaksi extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_cmdKeluarActionPerformed
 
-    private void txtJmlKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtJmlKeyPressed
-        // TODO add your handling code here:
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            hitung_jual();
-            simpan_ditabel();
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Metal".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(frmPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(frmPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(frmPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(frmPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_txtJmlKeyPressed
+        //</editor-fold>
 
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new frmPembelian().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cmbKd_Brg;
-    private javax.swing.JComboBox<String> cmbKd_Kons;
+    private javax.swing.JComboBox<String> cmbKd_Pms;
     private javax.swing.JButton cmdBatal;
     private javax.swing.JButton cmdCetak;
     private javax.swing.JButton cmdHapusItem;
@@ -727,52 +771,15 @@ public class frmTransaksi extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tblJual;
+    private javax.swing.JTable tblBeli;
     private javax.swing.JTextArea text;
     private javax.swing.JTextField txtHarga;
     private javax.swing.JTextField txtJml;
     private javax.swing.JTextField txtNama;
     private javax.swing.JTextField txtNm_Brg;
-    private javax.swing.JTextField txtNoJual;
+    private javax.swing.JTextField txtNoBeli;
     private javax.swing.JSpinner txtTgl;
     private javax.swing.JTextField txtTot;
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
-
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Create and display the form */
-         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Metal".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmTransaksi().setVisible(true);
-            }
-        });
-    }
 }
-
-
-   
