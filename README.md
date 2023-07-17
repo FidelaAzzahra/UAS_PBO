@@ -1,6 +1,6 @@
 <h3>Aplikasi Penjualan Netbeans</h3>
 
-<b>UAS Mata kuliah Pemrograman Berorientasi Objek</b>
+<b>UAS Pemrograman Berorientasi Objek</b>
 
 Requirement : openjdk 15.0.2, Apache Netbeans versi 14, mysql-connector-j-8.0.33.jar, dan jcalendar-1.4.jar 
 
