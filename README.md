@@ -17,9 +17,9 @@ Di dalam masing-masing menu Data Master dapat melakukan proses CRUD (Create, Rea
 
 Di dalam menu Transaksi Penjualan dapat melakukan pendataan penjualan barang kepada konsumen dan mencetak nota transaksi dalam format file PDF. Relasi yang terjadi adalah antara tabel barang, konsumen, penjualan, dan detail penjualan. Kegiatan penjualan akan mengurangi jumlah stok barang.
 
-Di dalam menu Transaksi Pembelian dapat melakukan pendataan pembelian barang kepada pemasok dan mencetak nota transaksi dalam format file PDF. Relasi yang terjadi adalah antara da tabel ta barang, pemasok, pembelian, dan detail pembelian. Kegiatan pembelian akan menambah jumlah stok barang.
+Di dalam menu Transaksi Pembelian dapat melakukan pendataan pembelian barang kepada pemasok dan mencetak nota transaksi dalam format file PDF. Relasi yang terjadi adalah antara tabel barang, pemasok, pembelian, dan detail pembelian. Kegiatan pembelian akan menambah jumlah stok barang.
 
 Di dalam menu Laporan dapat menampilkan data transaksi berdasarkan range tanggal dan dapat menghasilkan keluaran berupa laporan data dalam format file excel.
 
-Jika tidak ada lagi yang akan dikerjakan maka Admin menekan menu Keluar untuk menutup aplikasi.
+Jika tidak ada lagi yang akan dikerjakan, Admin menekan menu Keluar untuk menutup aplikasi.
 
