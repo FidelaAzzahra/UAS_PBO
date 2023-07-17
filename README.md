@@ -7,7 +7,7 @@ Requirement : openjdk 15.0.2, Apache Netbeans versi 14, mysql-connector-j-8.0.33
 Buat sebuah aplikasi Jual Beli menggunakan Bahasa pemrograman Java yang bisa melakukan pendataan data master Barang, Konsumen (Customer), dan Pemasok (Supplier). 
 Melakukan pencatatan transaksi Penjualan dan Pembelian. Serta bisa menghasilkan keluaran berupa laporan untuk semua data master dan data transaksi yang ada. Pengguna aplikasi hanya Admin.
 
-Alur program diawali dengan Admin melakukan autentifikasi melalui form login. Jika kombinasi user id dan password yang diinputkan tidak cocok dengan data yang ada di database maka tampilan akan tetap berada pada form login. Jika cocok maka akan muncul form yang berisi menu-menu dari aplikasi.
+Alur program diawali dengan Admin melakukan autentifikasi melalui form login (user ID : 12345 | password : admin). Jika kombinasi user id dan password yang diinputkan tidak cocok dengan data yang ada di database maka tampilan akan tetap berada pada form login. Jika cocok maka akan muncul form yang berisi menu-menu dari aplikasi.
 Menu yang ada di aplikasi adalah :
 - Data Master : Barang, Konsumen, Pemasok
 - Transaksi : Penjualan, Pembelian
